@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirDLC — Minecraft Client</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --accent: #00ccff;
+            --accent2: #a855f7;
+            --bg-900: #08080f;
+            --bg-800: #0d0d18;
+            --bg-700: #13131f;
+            --bg-600: #1a1a28;
+            --text-100: #ffffff;
+            --text-300: #b0bcdd;
+            --text-500: #7788aa;
+            --text-700: #445;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: var(--bg-900);
+            color: var(--text-100);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        a { text-decoration: none; color: inherit; }
+        
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(8, 8, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .logo span {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav a {
+            font-size: 14px;
+            color: var(--text-300);
+            transition: color 0.2s;
+        }
+        
+        .nav a:hover { color: var(--accent); }
+        
+        .header-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #08080f;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: transform 0.2s;
+        }
+        
+        .header-btn:hover { transform: scale(1.05); }
+        
+        @media (max-width: 700px) {
+            .nav { display: none; }
+            .header { padding: 14px 20px; }
+        }
+        
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(0, 204, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                var(--bg-900);
+        }
+        
+        .hero p.subtitle {
+            color: var(--text-500);
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+        }
+        
+        .hero h1 span {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p.desc {
+            color: var(--text-300);
+            font-size: 18px;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #08080f;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(0, 204, 255, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--text-100);
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--accent);
+            background: rgba(0, 204, 255, 0.05);
+        }
+        
+        @media (max-width: 700px) {
+            .hero h1 { font-size: 44px; }
+            .hero p.desc { font-size: 16px; }
+        }
+        
+        /* ===== FEATURES ===== */
+        .section {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section h2 {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+        
+        .section h2 span {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section p.sub {
+            color: var(--text-500);
+            font-size: 18px;
+            margin-bottom: 50px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .feature {
+            background: var(--bg-800);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .feature:hover {
+            border-color: rgba(0, 204, 255, 0.3);
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, rgba(0, 204, 255, 0.15), rgba(168, 85, 247, 0.15));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+        
+        .feature h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: var(--text-500);
+            font-size: 14px;
+        }
+        
+        /* ===== PRICING ===== */
+        .pricing {
+            background: var(--bg-800);
+            padding: 100px 40px;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .price-card {
+            background: var(--bg-700);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 36px 30px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .price-card:hover {
+            border-color: rgba(0, 204, 255, 0.3);
+        }
+        
+        .price-card.best {
+            border-color: var(--accent);
+            box-shadow: 0 0 60px rgba(0, 204, 255, 0.1);
+        }
+        
+        .price-card .badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #08080f;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        
+        .price-card h3 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .price-card .price {
+            font-size: 56px;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+        
+        .price-card .price small {
+            font-size: 20px;
+            -webkit-text-fill-color: var(--text-500);
+        }
+        
+        .price-card .desc {
+            color: var(--text-500);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .price-card ul {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        
+        .price-card ul li {
+            padding: 10px 0;
+            color: var(--text-300);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        
+        .price-card ul li::before {
+            content: "✓";
+            color: var(--accent);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .price-card .btn-primary {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--bg-900);
+            padding: 60px 40px 30px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .footer a {
+            display: block;
+            color: var(--text-500);
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: color 0.2s;
+        }
+        
+        .footer a:hover { color: var(--accent); }
+        
+        .footer-copy {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            text-align: center;
+            color: var(--text-700);
+            font-size: 13px;
+        }
+        
+        @media (max-width: 700px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .section { padding: 60px 20px; }
+            .section h2 { font-size: 32px; }
+            .pricing { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>AirDLC</span>
+    </div>
+    <div class="nav">
+        <a href="#features">Возможности</a>
+        <a href="#pricing">Цены</a>
+        <a href="https://discord.gg/UCCEZkMUhM" target="_blank" class="header-btn">Discord</a>
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <p class="subtitle">Yet another perfect minecraft client...</p>
+    <h1>AirDLC.<br><span>Maxed out.</span></h1>
+    <p class="desc">AirDLC — это Minecraft-клиент, в который разработчики вложили всю душу... и все мозги.</p>
+    <div class="hero-buttons">
+        <a href="https://discord.gg/UCCEZkMUhM" target="_blank" class="btn-primary">Начать бесплатно</a>
+        <a href="#features" class="btn-outline">Смотреть функции</a>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+    <h2>Мощно, но <span>так просто</span>.</h2>
+    <p class="sub">Столько функций. Но так легко использовать.</p>
+    
+    <div class="features-grid">
+        <div class="feature">
+            <div class="feature-icon">⚔️</div>
+            <h3>KillAura</h3>
+            <p>Автоматически атакует врагов в радиусе действия.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">⚡</div>
+            <h3>Speed</h3>
+            <p>Увеличивает базовую скорость передвижения.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">👁️</div>
+            <h3>ESP</h3>
+            <p>Показывает информацию об объектах через стены.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🛡️</div>
+            <h3>Anti-Cheat Bypass</h3>
+            <p>Обход любых античитов: AAC, Grim, Vulcan.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🌾</div>
+            <h3>AutoFarm</h3>
+            <p>Автоматический фарм ресурсов и обломков.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🎨</div>
+            <h3>Косметика</h3>
+            <p>Шляпы, крылья, нимбы и другие визуальные эффекты.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+    <div style="max-width:1200px;margin:0 auto;">
+        <h2>Качество должно быть <span>доступно каждому</span>.</h2>
+        <p class="sub" style="color:var(--text-500);font-size:18px;margin-bottom:50px;">Отличные цены для отличного качества.</p>
+        
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Free</h3>
+                <div class="price">0<small>₽</small></div>
+                <p class="desc">Отличный старт для новичков.</p>
+                <ul>
+                    <li>Поддержка 24/7</li>
+                    <li>Более 15 модулей</li>
+                    <li>Простой интерфейс</li>
+                    <li>Обновления</li>
+                </ul>
+                <a href="https://discord.gg/UCCEZkMUhM" target="_blank" class="btn-primary">Скачать</a>
+            </div>
+            
+            <div class="price-card best">
+                <div class="badge">Лучший выбор</div>
+                <h3>Premium</h3>
+                <div class="price">499<small>₽</small></div>
+                <p class="desc">Идеальный способ наслаждаться игрой.</p>
+                <ul>
+                    <li>Всё из Free</li>
+                    <li>Эксклюзивные модули</li>
+                    <li>Ранний доступ</li>
+                    <li>Приоритетная поддержка</li>
+                </ul>
+                <a href="https://discord.gg/UCCEZkMUhM" target="_blank" class="btn-primary">Купить</a>
+            </div>
+            
+            <div class="price-card">
+                <h3>HWID Reset</h3>
+                <div class="price">449<small>₽</small></div>
+                <p class="desc">Сброс привязки к железу.</p>
+                <ul>
+                    <li>Цена за один сброс</li>
+                    <li>Быстрое выполнение</li>
+                    <li>Поддержка 24/7</li>
+                </ul>
+                <a href="https://discord.gg/UCCEZkMUhM" target="_blank" class="btn-primary">Заказать</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+    <div class="footer-content">
+        <div>
+            <div class="logo" style="margin-bottom:16px;">
+                <div class="logo-icon">⚡</div>
+                <span>AirDLC</span>
+            </div>
+            <p style="color:var(--text-500);font-size:14px;">Мы создаём лучший Minecraft-клиент.</p>
+        </div>
+        <div>
+            <h4>Навигация</h4>
+            <a href="#features">Возможности</a>
+            <a href="#pricing">Цены</a>
+            <a href="https://discord.gg/UCCEZkMUhM" target="_blank">Discord</a>
+        </div>
+        <div>
+            <h4>Документы</h4>
+            <a href="#">Политика конфиденциальности</a>
+            <a href="#">Условия пользования</a>
+            <a href="#">Возврат средств</a>
+        </div>
+    </div>
+    <div class="footer-copy">
+        © 2026 AirDLC. Все права защищены.
+    </div>
+</div>
+
+</body>
+</html>
